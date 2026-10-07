@@ -24,7 +24,7 @@
   <header class="max-w-4xl mx-auto w-full flex justify-between items-center bg-slate-800/80 backdrop-blur p-4 rounded-2xl border border-slate-700 shadow-xl mb-4">
     <div class="flex items-center gap-3">
       <span class="bg-indigo-600 text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">Eiken Pre-1</span>
-      <h1 class="text-lg font-bold">Vocabulary Quest</h1>
+      <h1 class="text-lg font-bold">Day 1 Synonyms Arena</h1>
     </div>
     <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-700">
       <button id="mode-game" onclick="setMode('game')" class="px-4 py-1.5 rounded-lg text-sm font-bold transition-all bg-indigo-600 text-white shadow-md">🎮 Game Arena</button>
@@ -34,44 +34,11 @@
 
   <!-- GAME ARENA MODE -->
   <main id="game-view" class="max-w-3xl mx-auto w-full flex-1 flex flex-col justify-center">
-    
-    <!-- LEVEL SELECT DASHBOARD -->
-    <div id="level-select-view" class="bg-slate-800/90 border border-slate-700 rounded-3xl p-6 md:p-8 shadow-2xl text-center">
-      <h2 class="text-3xl font-extrabold mb-2 text-white">Select Vocabulary Level</h2>
-      <p class="text-slate-400 mb-6 text-sm">Score <b>90% or higher</b> to unlock the next level!</p>
+    <div class="bg-slate-800/90 border border-slate-700 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
       
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <!-- Level 1 -->
-        <div onclick="startLevel(1)" id="card-lvl-1" class="cursor-pointer bg-slate-700/80 hover:bg-indigo-600/90 border-2 border-indigo-500 rounded-2xl p-5 transition-all transform hover:-translate-y-1">
-          <div class="text-3xl mb-2">⭐</div>
-          <h3 class="font-extrabold text-lg">Level 1</h3>
-          <p class="text-xs text-slate-300 mb-3">Day 1 Verbs I</p>
-          <span id="badge-lvl-1" class="text-xs bg-indigo-900 text-indigo-200 px-2.5 py-1 rounded-full font-bold">UNLOCKED</span>
-        </div>
-
-        <!-- Level 2 -->
-        <div onclick="startLevel(2)" id="card-lvl-2" class="cursor-not-allowed opacity-50 bg-slate-800 border-2 border-slate-700 rounded-2xl p-5 transition-all">
-          <div class="text-3xl mb-2">🔒</div>
-          <h3 class="font-extrabold text-lg">Level 2</h3>
-          <p class="text-xs text-slate-400 mb-3">Positive Adjectives</p>
-          <span id="badge-lvl-2" class="text-xs bg-slate-700 text-slate-400 px-2.5 py-1 rounded-full font-bold">REQUIRES 90% L1</span>
-        </div>
-
-        <!-- Level 3 -->
-        <div onclick="startLevel(3)" id="card-lvl-3" class="cursor-not-allowed opacity-50 bg-slate-800 border-2 border-slate-700 rounded-2xl p-5 transition-all">
-          <div class="text-3xl mb-2">🔒</div>
-          <h3 class="font-extrabold text-lg">Level 3</h3>
-          <p class="text-xs text-slate-400 mb-3">Negative Adjectives & Verbs II</p>
-          <span id="badge-lvl-3" class="text-xs bg-slate-700 text-slate-400 px-2.5 py-1 rounded-full font-bold">REQUIRES 90% L2</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- QUIZ PLAY ARENA -->
-    <div id="quiz-arena-view" class="hidden bg-slate-800/90 border border-slate-700 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
       <!-- Stats Bar -->
       <div class="flex justify-between items-center mb-4 text-sm font-bold text-slate-400 border-b border-slate-700 pb-4">
-        <span>Level <span id="current-lvl-num" class="text-indigo-400">1</span> • Question <span id="q-num" class="text-indigo-400">1</span>/<span id="total-q-num">6</span></span>
+        <span>Question <span id="q-num" class="text-indigo-400">1</span>/8</span>
         <span class="text-amber-400 font-extrabold" id="streak-tag">🔥 0 STREAK</span>
         <span>Score: <span id="score-num" class="text-emerald-400">0</span></span>
       </div>
@@ -84,7 +51,10 @@
       <!-- Question Card -->
       <div id="quiz-container">
         <h2 id="q-prompt" class="text-xl md:text-2xl font-extrabold text-center mb-6 text-white">Loading Question...</h2>
-        <div id="options-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        
+        <div id="options-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Dynamic Options -->
+        </div>
       </div>
 
       <!-- Result Modal / Feedback -->
@@ -95,19 +65,13 @@
         <button onclick="nextQuestion()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-transform active:scale-95">Next Question ➔</button>
       </div>
 
-      <!-- Level Completion Summary -->
-      <div id="summary-view" class="hidden text-center py-6">
-        <span id="summary-icon" class="text-6xl">🏆</span>
-        <h2 id="summary-title" class="text-3xl font-extrabold mt-4 mb-2">Level Complete!</h2>
-        <p class="text-slate-400 mb-2">Accuracy Score:</p>
-        <div class="text-5xl font-black text-amber-400 mb-2" id="final-accuracy">0%</div>
-        <p id="summary-msg" class="text-sm text-slate-300 mb-6 max-w-md mx-auto"></p>
-        
-        <div class="flex justify-center gap-4">
-          <button onclick="showLevelSelect()" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 px-6 rounded-xl">Level Menu 📋</button>
-          <button id="retry-btn" onclick="retryLevel()" class="bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold py-3 px-6 rounded-xl">Try Again 🔄</button>
-          <button id="next-lvl-btn" onclick="advanceNextLevel()" class="hidden bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold py-3 px-6 rounded-xl">Next Level ➔</button>
-        </div>
+      <!-- Podium Summary -->
+      <div id="summary-view" class="hidden text-center py-8">
+        <span class="text-6xl">🏆</span>
+        <h2 class="text-3xl font-extrabold mt-4 mb-2">Arena Complete!</h2>
+        <p class="text-slate-400 mb-6">Your Vocabulary Mastery Score:</p>
+        <div class="text-5xl font-black text-amber-400 mb-6" id="final-score">0</div>
+        <button onclick="restartGame()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg">Play Again 🔄</button>
       </div>
     </div>
   </main>
@@ -117,7 +81,7 @@
     <div class="bg-slate-800 border border-slate-700 rounded-3xl p-8 shadow-2xl relative">
       <div class="flex justify-between items-center mb-6">
         <span class="text-xs font-bold bg-indigo-900/80 text-indigo-300 px-3 py-1 rounded-full" id="slide-cat">Vocabulary Group</span>
-        <span class="text-sm font-bold text-slate-400" id="slide-num">Slide 1 / 18</span>
+        <span class="text-sm font-bold text-slate-400" id="slide-num">Slide 1 / 8</span>
       </div>
 
       <div class="text-center py-6">
@@ -127,12 +91,13 @@
         <div id="slide-answer-box" class="bg-slate-900/80 p-6 rounded-2xl border border-slate-700 inline-block max-w-xl w-full">
           <button onclick="revealSlideAnswer()" id="reveal-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 px-6 rounded-xl text-sm">Click to Reveal Synonym Verdict</button>
           <div id="slide-answer-text" class="hidden text-left">
-            <span class="inline-block bg-emerald-500/20 text-emerald-400 font-extrabold px-3 py-1 rounded-lg text-sm mb-2">VERDICT</span>
-            <p id="slide-explanation-text" class="text-slate-300 text-sm"></p>
+            <span class="inline-block bg-emerald-500/20 text-emerald-400 font-extrabold px-3 py-1 rounded-lg text-sm mb-2">✅ SYNONYMS</span>
+            <p class="text-slate-300 text-sm">Both mean "quick and light in movement". Used interchangeably for physical agility or quick thinking.</p>
           </div>
         </div>
       </div>
 
+      <!-- Slide Nav -->
       <div class="flex justify-between items-center mt-8 border-t border-slate-700 pt-6">
         <button onclick="prevSlide()" class="px-5 py-2.5 bg-slate-700 hover:bg-slate-600 rounded-xl font-bold text-sm">◀ Previous</button>
         <button onclick="nextSlide()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-bold text-sm">Next ▶</button>
@@ -140,79 +105,152 @@
     </div>
   </main>
 
+  <!-- Footer -->
   <footer class="text-center text-slate-500 text-xs py-4">
-    Eiken Pre-1 Vocabulary Quest • 90% Mastery Level System
+    Eiken Pre-1 Synonyms Game Deck • Powered by Wayground Style UI
   </footer>
 
   <script>
+    // Audio Context Synthesizer (No external audio files needed)
     let audioCtx = null;
-    function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
     function playSound(type) {
       try {
         initAudio();
         if (!audioCtx) return;
+
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
         const now = audioCtx.currentTime;
+
         if (type === 'click') {
-          osc.frequency.setValueAtTime(400, now); gain.gain.setValueAtTime(0.05, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05); osc.start(now); osc.stop(now + 0.05);
+          osc.frequency.setValueAtTime(400, now);
+          gain.gain.setValueAtTime(0.05, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+          osc.start(now);
+          osc.stop(now + 0.05);
         } else if (type === 'correct') {
-          osc.frequency.setValueAtTime(523.25, now); osc.frequency.setValueAtTime(659.25, now + 0.08);
-          gain.gain.setValueAtTime(0.15, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-          osc.start(now); osc.stop(now + 0.25);
+          osc.frequency.setValueAtTime(523.25, now); // C5
+          osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
         } else if (type === 'wrong' || type === 'timeout') {
-          osc.type = 'sawtooth'; osc.frequency.setValueAtTime(220, now); osc.frequency.setValueAtTime(164.81, now + 0.12);
-          gain.gain.setValueAtTime(0.15, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-          osc.start(now); osc.stop(now + 0.3);
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.setValueAtTime(164.81, now + 0.12);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
         } else if (type === 'win') {
           [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
-            const subOsc = audioCtx.createOscillator(); const subGain = audioCtx.createGain();
-            subOsc.connect(subGain); subGain.connect(audioCtx.destination);
-            subOsc.frequency.setValueAtTime(freq, now + idx * 0.1); subGain.gain.setValueAtTime(0.1, now + idx * 0.1);
+            const subOsc = audioCtx.createOscillator();
+            const subGain = audioCtx.createGain();
+            subOsc.connect(subGain);
+            subGain.connect(audioCtx.destination);
+            subOsc.frequency.setValueAtTime(freq, now + idx * 0.1);
+            subGain.gain.setValueAtTime(0.1, now + idx * 0.1);
             subGain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.2);
-            subOsc.start(now + idx * 0.1); subOsc.stop(now + idx * 0.1 + 0.2);
+            subOsc.start(now + idx * 0.1);
+            subOsc.stop(now + idx * 0.1 + 0.2);
           });
         }
-      } catch (e) {}
+      } catch (e) {
+        console.log("Audio not allowed yet");
+      }
     }
 
-    const levelsData = {
-      1: [
-        { prompt: "Are 'prescribe' and 'discard' synonyms?", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 1, cat: "Day 1 Verbs", jp: "1. discarded (捨てた) vs 3. prescribed (処方した)", explanation: "❌ Not Synonyms! Prescribe = 処方する; Discard = 捨てる." },
-        { prompt: "Are 'reinforce' and 'fortify' synonyms?", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Day 1 Verbs", jp: "4. reinforce (強化する)", explanation: "✅ Synonyms! Both mean to make stronger or reinforce structures." },
-        { prompt: "Are 'articulate' and 'express clearly' synonyms?", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Day 1 Verbs", jp: "2. articulated (明確に述べた)", explanation: "✅ Synonyms! Articulate means to express thoughts clearly." },
-        { prompt: "Are 'conform' and 'contradict' synonyms?", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 1, cat: "Day 1 Verbs", jp: "1. conform (従う) vs 3. contradict (矛盾する)", explanation: "❌ Antonyms! Conform = 基準に従う; Contradict = 矛盾する." },
-        { prompt: "Are 'enroll' and 'register' synonyms?", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Day 1 Verbs", jp: "2. enrolling (登録して)", explanation: "✅ Synonyms! Both mean to officially enter a course/program." },
-        { prompt: "Are 'boost' and 'humiliate' synonyms?", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 1, cat: "Day 1 Verbs", jp: "3. boost (活性化する) vs 2. humiliate (恥をかかせる)", explanation: "❌ Not Synonyms! Boost = 活性化する; Humiliate = 恥をかかせる." }
-      ],
-      2: [
-        { prompt: "Are 'agile' and 'nimble' synonyms?", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Positive Adjectives", jp: "すばやい登山家 (agile, nimble) climbers", explanation: "✅ Synonyms! Both mean quick and light in movement." },
-        { prompt: "Are 'feasible' and 'viable' synonyms?", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Positive Adjectives", jp: "実行可能な計画 a (feasible, viable) plan", explanation: "✅ Synonyms! Both mean practical and capable of working." },
-        { prompt: "Which word is the odd one out for 'crucial role'?", options: ["critical", "vital", "essential", "obsolete"], correct: 3, cat: "Positive Adjectives", jp: "重要な役割 (crucial, critical, vital, essential) role", explanation: "🎯 'Obsolete' means outdated (ネガティブ), unlike the rest." },
-        { prompt: "Are 'cautious' and 'prudent' synonyms?", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Positive Adjectives", jp: "慎重な実業家 (cautious, prudent) businessperson", explanation: "✅ Synonyms! Both mean showing care and foresight." },
-        { prompt: "Are 'coherent' and 'consistent' synonyms?", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Positive Adjectives", jp: "筋の通った意見 a (coherent, consistent) argument", explanation: "✅ Synonyms! Both mean logical and well-structured." },
-        { prompt: "Are 'ardent' and 'apathetic' synonyms?", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 1, cat: "Positive Adjectives", jp: "熱烈な支持者 (ardent, passionate) supporters", explanation: "❌ Antonyms! Ardent = 熱烈な; Apathetic = 無関心な." }
-      ],
-      3: [
-        { prompt: "Select the synonym for 'bleak' outlook:", options: ["dismal", "robust", "brisk", "prominent"], correct: 0, cat: "Negative Adjectives", jp: "暗い見通し a (bleak, dismal, gloomy) outlook", explanation: "✅ Correct! Bleak, dismal, and gloomy all mean dark/gloomy." },
-        { prompt: "Are 'unveil' and 'insulate' synonyms?", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 1, cat: "Verbs II", jp: "1. unveiled (明らかにされた) vs 2. insulated (隔離された)", explanation: "❌ Not Synonyms! Unveil = 公開する; Insulate = 隔離・断熱する." },
-        { prompt: "Are 'absurd' and 'ridiculous' synonyms?", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Negative Adjectives", jp: "ばかげた考え a (absurd, ridiculous) idea", explanation: "✅ Synonyms! Both mean completely unreasonable or silly." },
-        { prompt: "Are 'obsolete' and 'outdated' synonyms?", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Negative Adjectives", jp: "古くさい兵器 (obsolete, outdated) weapons", explanation: "✅ Synonyms! Both mean no longer produced or used." },
-        { prompt: "Are 'prohibit' and 'authorize' synonyms?", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 1, cat: "Verbs II", jp: "4. prohibited (禁止された) vs 3. authorized (権限を与えた)", explanation: "❌ Antonyms! Prohibit = 禁止する; Authorize = 許可・権限を与える." },
-        { prompt: "Are 'fickle' and 'capricious' synonyms?", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Negative Adjectives", jp: "気紛れな恋人 (capricious, fickle) boyfriend", explanation: "✅ Synonyms! Both mean changing loyally/unpredictably." }
-      ]
-    };
+    const quizData = [
+      {
+        prompt: "Are 'agile' and 'nimble' synonyms?",
+        options: ["Yes, Synonyms", "No, Not Synonyms"],
+        correct: 0,
+        type: "binary",
+        cat: "Positive Adjectives",
+        jp: "すばやい登山家 (agile, nimble) climbers",
+        explanation: "✅ Correct! Both mean quick and light in movement."
+      },
+      {
+        prompt: "Are 'prescribe' and 'discard' synonyms?",
+        options: ["Yes, Synonyms", "No, Not Synonyms"],
+        correct: 1,
+        type: "binary",
+        cat: "Verbs (Day 1)",
+        jp: "1. discarded (捨てた) / 3. prescribed (処方した)",
+        explanation: "❌ Not Synonyms! 'Prescribe' means to issue medication, while 'discard' means to throw away."
+      },
+      {
+        prompt: "Are 'conform' and 'contradict' synonyms?",
+        options: ["Yes, Synonyms", "No, Not Synonyms"],
+        correct: 1,
+        type: "binary",
+        cat: "Verbs (Day 1)",
+        jp: "1. conform (従う、満たす) vs 3. contradict (矛盾する)",
+        explanation: "❌ Antonyms! 'Conform' means to comply with standards, while 'contradict' means to oppose."
+      },
+      {
+        prompt: "Are 'feasible' and 'viable' synonyms?",
+        options: ["Yes, Synonyms", "No, Not Synonyms"],
+        correct: 0,
+        type: "binary",
+        cat: "Positive Adjectives",
+        jp: "実行可能な計画 a (feasible, viable) plan",
+        explanation: "✅ Correct! Both mean capable of working successfully or practical."
+      },
+      {
+        prompt: "Which word is the odd one out for 'crucial role'?",
+        options: ["critical", "vital", "essential", "obsolete"],
+        correct: 3,
+        type: "mcq",
+        cat: "Negative vs Positive",
+        jp: "重要な役割 (crucial, critical, vital, essential) role",
+        explanation: "🎯 'Obsolete' means outdated (ネガティブ), whereas the others mean essential/crucial."
+      },
+      {
+        prompt: "Are 'unveil' and 'insulate' synonyms?",
+        options: ["Yes, Synonyms", "No, Not Synonyms"],
+        correct: 1,
+        type: "binary",
+        cat: "Verbs (Day 1)",
+        jp: "1. unveiled (明らかにされた) vs 2. insulated (隔離された)",
+        explanation: "❌ Not Synonyms! 'Unveil' means reveal to public; 'insulate' means isolate/protect."
+      },
+      {
+        prompt: "Select the synonym for 'bleak' outlook:",
+        options: ["dismal", "robust", "brisk", "prominent"],
+        correct: 0,
+        type: "mcq",
+        cat: "Negative Adjectives",
+        jp: "暗い見通し a (bleak, dismal, gloomy) outlook",
+        explanation: "✅ Correct! 'Bleak', 'dismal', and 'gloomy' all express dark/gloomy conditions."
+      },
+      {
+        prompt: "Select the synonym for 'cautious' businessperson:",
+        options: ["prudent", "impudent", "fickle", "exert"],
+        correct: 0,
+        type: "mcq",
+        cat: "Positive Adjectives",
+        jp: "慎重な実業家 a (cautious, prudent, discreet) businessperson",
+        explanation: "✅ Correct! 'Prudent' and 'cautious' both mean showing care and thought for the future."
+      }
+    ];
 
-    let unlockedLevel = 1;
-    let activeLevel = 1;
     let currentQ = 0;
     let score = 0;
-    let correctCount = 0;
     let streak = 0;
-    let timerTimeout = null;
     let currentSlide = 0;
+    let timerTimeout = null;
 
     function setMode(mode) {
       playSound('click');
@@ -221,6 +259,7 @@
         document.getElementById('slides-view').classList.add('hidden');
         document.getElementById('mode-game').className = "px-4 py-1.5 rounded-lg text-sm font-bold transition-all bg-indigo-600 text-white shadow-md";
         document.getElementById('mode-slides').className = "px-4 py-1.5 rounded-lg text-sm font-bold text-slate-400 hover:text-white transition-all";
+        startTimer();
       } else {
         clearTimeout(timerTimeout);
         document.getElementById('game-view').classList.add('hidden');
@@ -231,50 +270,16 @@
       }
     }
 
-    function showLevelSelect() {
-      playSound('click');
-      clearTimeout(timerTimeout);
-      document.getElementById('level-select-view').classList.remove('hidden');
-      document.getElementById('quiz-arena-view').classList.add('hidden');
-      updateLevelDashboard();
-    }
-
-    function updateLevelDashboard() {
-      for (let lvl = 2; lvl <= 3; lvl++) {
-        const card = document.getElementById(`card-lvl-${lvl}`);
-        const badge = document.getElementById(`badge-lvl-${lvl}`);
-        if (unlockedLevel >= lvl) {
-          card.className = "cursor-pointer bg-slate-700/80 hover:bg-indigo-600/90 border-2 border-indigo-500 rounded-2xl p-5 transition-all transform hover:-translate-y-1";
-          card.querySelector('.text-3xl').innerText = lvl === 2 ? "⭐⭐" : "⭐⭐⭐";
-          badge.className = "text-xs bg-emerald-900 text-emerald-200 px-2.5 py-1 rounded-full font-bold";
-          badge.innerText = "UNLOCKED";
-        }
-      }
-    }
-
-    function startLevel(lvl) {
-      if (lvl > unlockedLevel) return;
-      playSound('click');
-      activeLevel = lvl;
-      currentQ = 0; score = 0; correctCount = 0; streak = 0;
-      document.getElementById('level-select-view').classList.add('hidden');
-      document.getElementById('quiz-arena-view').classList.remove('hidden');
-      document.getElementById('summary-view').classList.add('hidden');
-      document.getElementById('quiz-container').classList.remove('hidden');
-      document.getElementById('current-lvl-num').innerText = activeLevel;
-      document.getElementById('total-q-num').innerText = levelsData[activeLevel].length;
-      document.getElementById('score-num').innerText = "0";
-      document.getElementById('streak-tag').innerText = "🔥 0 STREAK";
-      renderQuestion();
-    }
-
     function startTimer() {
       const bar = document.getElementById('timer-bar');
       bar.classList.remove('animate-timer');
-      void bar.offsetWidth;
+      void bar.offsetWidth; // Trigger reflow
       bar.classList.add('animate-timer');
+
       clearTimeout(timerTimeout);
-      timerTimeout = setTimeout(() => { handleTimeout(); }, 15000);
+      timerTimeout = setTimeout(() => {
+        handleTimeout();
+      }, 15000);
     }
 
     function handleTimeout() {
@@ -284,16 +289,18 @@
       document.getElementById('feedback-badge').innerText = "⏰";
       document.getElementById('feedback-title').innerText = "Time's Up!";
       document.getElementById('feedback-title').className = "text-3xl font-extrabold mb-2 text-amber-400";
-      document.getElementById('feedback-detail').innerText = "You ran out of time!";
+      document.getElementById('feedback-detail').innerText = "You ran out of time for this question!";
       document.getElementById('feedback-modal').classList.remove('hidden');
     }
 
     function renderQuestion() {
-      const q = levelsData[activeLevel][currentQ];
+      const q = quizData[currentQ];
       document.getElementById('q-num').innerText = currentQ + 1;
       document.getElementById('q-prompt').innerText = q.prompt;
+      
       const grid = document.getElementById('options-grid');
       grid.innerHTML = '';
+
       q.options.forEach((opt, idx) => {
         const btn = document.createElement('button');
         btn.className = "p-4 bg-slate-700/80 hover:bg-indigo-600 rounded-2xl font-bold text-left transition-all border border-slate-600 hover:border-indigo-400 active:scale-95 flex items-center justify-between";
@@ -301,18 +308,19 @@
         btn.onclick = () => checkAnswer(idx);
         grid.appendChild(btn);
       });
+
       startTimer();
     }
 
     function checkAnswer(idx) {
       clearTimeout(timerTimeout);
-      const q = levelsData[activeLevel][currentQ];
+      const q = quizData[currentQ];
       const isCorrect = idx === q.correct;
       const modal = document.getElementById('feedback-modal');
       
       if (isCorrect) {
         playSound('correct');
-        correctCount++; streak++;
+        streak++;
         score += 100 + (streak * 20);
         document.getElementById('feedback-badge').innerText = "🔥";
         document.getElementById('feedback-title').innerText = "Correct!";
@@ -335,62 +343,40 @@
       playSound('click');
       document.getElementById('feedback-modal').classList.add('hidden');
       currentQ++;
-      if (currentQ < levelsData[activeLevel].length) {
+      if (currentQ < quizData.length) {
         renderQuestion();
       } else {
-        finishLevel();
-      }
-    }
-
-    function finishLevel() {
-      clearTimeout(timerTimeout);
-      const total = levelsData[activeLevel].length;
-      const accuracy = Math.round((correctCount / total) * 100);
-      
-      document.getElementById('quiz-container').classList.add('hidden');
-      document.getElementById('summary-view').classList.remove('hidden');
-      document.getElementById('final-accuracy').innerText = `${accuracy}%`;
-
-      const nextBtn = document.getElementById('next-lvl-btn');
-      
-      if (accuracy >= 90) {
         playSound('win');
-        document.getElementById('summary-icon').innerText = "🎉";
-        document.getElementById('summary-title').innerText = "Mastery Achieved!";
-        document.getElementById('summary-msg').innerText = `Awesome job! You met the 90% accuracy goal to master Level ${activeLevel}.`;
-        
-        if (activeLevel < 3 && unlockedLevel < activeLevel + 1) {
-          unlockedLevel = activeLevel + 1;
-        }
-        
-        if (activeLevel < 3) {
-          nextBtn.classList.remove('hidden');
-        } else {
-          nextBtn.classList.add('hidden');
-        }
-      } else {
-        playSound('wrong');
-        document.getElementById('summary-icon').innerText = "📚";
-        document.getElementById('summary-title').innerText = "Keep Practicing!";
-        document.getElementById('summary-msg').innerText = `You scored ${accuracy}%. You need at least 90% accuracy to unlock the next level!`;
-        nextBtn.classList.add('hidden');
+        clearTimeout(timerTimeout);
+        document.getElementById('quiz-container').classList.add('hidden');
+        document.getElementById('summary-view').classList.remove('hidden');
+        document.getElementById('final-score').innerText = score;
       }
     }
 
-    function retryLevel() { startLevel(activeLevel); }
-    function advanceNextLevel() { if (activeLevel < 3) startLevel(activeLevel + 1); }
+    function restartGame() {
+      playSound('click');
+      currentQ = 0;
+      score = 0;
+      streak = 0;
+      document.getElementById('streak-tag').innerText = "🔥 0 STREAK";
+      document.getElementById('score-num').innerText = "0";
+      document.getElementById('summary-view').classList.add('hidden');
+      document.getElementById('quiz-container').classList.remove('hidden');
+      renderQuestion();
+    }
 
-    // Slide View All Questions
-    const allSlides = [...levelsData[1], ...levelsData[2], ...levelsData[3]];
+    // Slides Mode Logic
     function renderSlide() {
-      const q = allSlides[currentSlide];
+      const q = quizData[currentSlide];
       document.getElementById('slide-cat').innerText = q.cat;
-      document.getElementById('slide-num').innerText = `Slide ${currentSlide + 1} / ${allSlides.length}`;
+      document.getElementById('slide-num').innerText = `Slide ${currentSlide + 1} / ${quizData.length}`;
       document.getElementById('slide-title').innerText = q.prompt;
       document.getElementById('slide-jp').innerText = q.jp;
+      
       document.getElementById('reveal-btn').classList.remove('hidden');
       document.getElementById('slide-answer-text').classList.add('hidden');
-      document.getElementById('slide-explanation-text').innerText = q.explanation;
+      document.getElementById('slide-answer-text').innerHTML = `<p class="text-slate-200 text-sm">${q.explanation}</p>`;
     }
 
     function revealSlideAnswer() {
@@ -401,12 +387,22 @@
 
     function nextSlide() {
       playSound('click');
-      if (currentSlide < allSlides.length - 1) { currentSlide++; renderSlide(); }
+      if (currentSlide < quizData.length - 1) {
+        currentSlide++;
+        renderSlide();
+      }
     }
+
     function prevSlide() {
       playSound('click');
-      if (currentSlide > 0) { currentSlide--; renderSlide(); }
+      if (currentSlide > 0) {
+        currentSlide--;
+        renderSlide();
+      }
     }
+
+    // Initialize
+    renderQuestion();
   </script>
 </body>
 </html>
