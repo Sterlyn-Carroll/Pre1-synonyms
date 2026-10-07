@@ -9,6 +9,13 @@
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
     .bg-grid { background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px); background-size: 24px 24px; }
+    @keyframes shrink {
+      from { width: 100%; }
+      to { width: 0%; }
+    }
+    .animate-timer {
+      animation: shrink 15s linear forwards;
+    }
   </style>
 </head>
 <body class="bg-slate-900 text-white min-h-screen flex flex-col justify-between p-4 bg-grid">
@@ -30,10 +37,15 @@
     <div class="bg-slate-800/90 border border-slate-700 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
       
       <!-- Stats Bar -->
-      <div class="flex justify-between items-center mb-6 text-sm font-bold text-slate-400 border-b border-slate-700 pb-4">
+      <div class="flex justify-between items-center mb-4 text-sm font-bold text-slate-400 border-b border-slate-700 pb-4">
         <span>Question <span id="q-num" class="text-indigo-400">1</span>/8</span>
         <span class="text-amber-400 font-extrabold" id="streak-tag">🔥 0 STREAK</span>
         <span>Score: <span id="score-num" class="text-emerald-400">0</span></span>
+      </div>
+
+      <!-- Timer Bar -->
+      <div class="w-full bg-slate-700 h-2.5 rounded-full mb-6 overflow-hidden">
+        <div id="timer-bar" class="bg-indigo-500 h-full w-full rounded-full"></div>
       </div>
 
       <!-- Question Card -->
@@ -99,6 +111,66 @@
   </footer>
 
   <script>
+    // Audio Context Synthesizer (No external audio files needed)
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playSound(type) {
+      try {
+        initAudio();
+        if (!audioCtx) return;
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        const now = audioCtx.currentTime;
+
+        if (type === 'click') {
+          osc.frequency.setValueAtTime(400, now);
+          gain.gain.setValueAtTime(0.05, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+          osc.start(now);
+          osc.stop(now + 0.05);
+        } else if (type === 'correct') {
+          osc.frequency.setValueAtTime(523.25, now); // C5
+          osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        } else if (type === 'wrong' || type === 'timeout') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.setValueAtTime(164.81, now + 0.12);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        } else if (type === 'win') {
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+            const subOsc = audioCtx.createOscillator();
+            const subGain = audioCtx.createGain();
+            subOsc.connect(subGain);
+            subGain.connect(audioCtx.destination);
+            subOsc.frequency.setValueAtTime(freq, now + idx * 0.1);
+            subGain.gain.setValueAtTime(0.1, now + idx * 0.1);
+            subGain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.2);
+            subOsc.start(now + idx * 0.1);
+            subOsc.stop(now + idx * 0.1 + 0.2);
+          });
+        }
+      } catch (e) {
+        console.log("Audio not allowed yet");
+      }
+    }
+
     const quizData = [
       {
         prompt: "Are 'agile' and 'nimble' synonyms?",
@@ -178,20 +250,47 @@
     let score = 0;
     let streak = 0;
     let currentSlide = 0;
+    let timerTimeout = null;
 
     function setMode(mode) {
+      playSound('click');
       if (mode === 'game') {
         document.getElementById('game-view').classList.remove('hidden');
         document.getElementById('slides-view').classList.add('hidden');
         document.getElementById('mode-game').className = "px-4 py-1.5 rounded-lg text-sm font-bold transition-all bg-indigo-600 text-white shadow-md";
         document.getElementById('mode-slides').className = "px-4 py-1.5 rounded-lg text-sm font-bold text-slate-400 hover:text-white transition-all";
+        startTimer();
       } else {
+        clearTimeout(timerTimeout);
         document.getElementById('game-view').classList.add('hidden');
         document.getElementById('slides-view').classList.remove('hidden');
         document.getElementById('mode-slides').className = "px-4 py-1.5 rounded-lg text-sm font-bold transition-all bg-indigo-600 text-white shadow-md";
         document.getElementById('mode-game').className = "px-4 py-1.5 rounded-lg text-sm font-bold text-slate-400 hover:text-white transition-all";
         renderSlide();
       }
+    }
+
+    function startTimer() {
+      const bar = document.getElementById('timer-bar');
+      bar.classList.remove('animate-timer');
+      void bar.offsetWidth; // Trigger reflow
+      bar.classList.add('animate-timer');
+
+      clearTimeout(timerTimeout);
+      timerTimeout = setTimeout(() => {
+        handleTimeout();
+      }, 15000);
+    }
+
+    function handleTimeout() {
+      playSound('timeout');
+      streak = 0;
+      document.getElementById('streak-tag').innerText = `🔥 0 STREAK`;
+      document.getElementById('feedback-badge').innerText = "⏰";
+      document.getElementById('feedback-title').innerText = "Time's Up!";
+      document.getElementById('feedback-title').className = "text-3xl font-extrabold mb-2 text-amber-400";
+      document.getElementById('feedback-detail').innerText = "You ran out of time for this question!";
+      document.getElementById('feedback-modal').classList.remove('hidden');
     }
 
     function renderQuestion() {
@@ -209,20 +308,25 @@
         btn.onclick = () => checkAnswer(idx);
         grid.appendChild(btn);
       });
+
+      startTimer();
     }
 
     function checkAnswer(idx) {
+      clearTimeout(timerTimeout);
       const q = quizData[currentQ];
       const isCorrect = idx === q.correct;
       const modal = document.getElementById('feedback-modal');
       
       if (isCorrect) {
+        playSound('correct');
         streak++;
         score += 100 + (streak * 20);
         document.getElementById('feedback-badge').innerText = "🔥";
         document.getElementById('feedback-title').innerText = "Correct!";
         document.getElementById('feedback-title').className = "text-3xl font-extrabold mb-2 text-emerald-400";
       } else {
+        playSound('wrong');
         streak = 0;
         document.getElementById('feedback-badge').innerText = "❌";
         document.getElementById('feedback-title').innerText = "Not Quite!";
@@ -236,11 +340,14 @@
     }
 
     function nextQuestion() {
+      playSound('click');
       document.getElementById('feedback-modal').classList.add('hidden');
       currentQ++;
       if (currentQ < quizData.length) {
         renderQuestion();
       } else {
+        playSound('win');
+        clearTimeout(timerTimeout);
         document.getElementById('quiz-container').classList.add('hidden');
         document.getElementById('summary-view').classList.remove('hidden');
         document.getElementById('final-score').innerText = score;
@@ -248,6 +355,7 @@
     }
 
     function restartGame() {
+      playSound('click');
       currentQ = 0;
       score = 0;
       streak = 0;
@@ -272,11 +380,13 @@
     }
 
     function revealSlideAnswer() {
+      playSound('click');
       document.getElementById('reveal-btn').classList.add('hidden');
       document.getElementById('slide-answer-text').classList.remove('hidden');
     }
 
     function nextSlide() {
+      playSound('click');
       if (currentSlide < quizData.length - 1) {
         currentSlide++;
         renderSlide();
@@ -284,6 +394,7 @@
     }
 
     function prevSlide() {
+      playSound('click');
       if (currentSlide > 0) {
         currentSlide--;
         renderSlide();
