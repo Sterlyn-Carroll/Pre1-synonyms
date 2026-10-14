@@ -9,13 +9,6 @@
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
     .bg-grid { background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px); background-size: 24px 24px; }
-    @keyframes shrink {
-      from { width: 100%; }
-      to { width: 0%; }
-    }
-    .animate-timer {
-      animation: shrink 15s linear forwards;
-    }
   </style>
 </head>
 <body class="bg-slate-900 text-white min-h-screen flex flex-col justify-between p-4 bg-grid">
@@ -70,15 +63,10 @@
     <!-- QUIZ PLAY ARENA -->
     <div id="quiz-arena-view" class="hidden bg-slate-800/90 border border-slate-700 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
       <!-- Stats Bar -->
-      <div class="flex justify-between items-center mb-4 text-sm font-bold text-slate-400 border-b border-slate-700 pb-4">
+      <div class="flex justify-between items-center mb-6 text-sm font-bold text-slate-400 border-b border-slate-700 pb-4">
         <span>Level <span id="current-lvl-num" class="text-indigo-400">1</span> • Question <span id="q-num" class="text-indigo-400">1</span>/<span id="total-q-num">6</span></span>
         <span class="text-amber-400 font-extrabold" id="streak-tag">🔥 0 STREAK</span>
         <span>Score: <span id="score-num" class="text-emerald-400">0</span></span>
-      </div>
-
-      <!-- Timer Bar -->
-      <div class="w-full bg-slate-700 h-2.5 rounded-full mb-6 overflow-hidden">
-        <div id="timer-bar" class="bg-indigo-500 h-full w-full rounded-full"></div>
       </div>
 
       <!-- Question Card -->
@@ -131,8 +119,7 @@
           <img id="slide-image" src="" alt="Slide vocabulary clue" class="hidden h-44 w-full max-w-md object-cover rounded-2xl border-2 border-slate-700 shadow-md">
         </div>
 
-        <h2 id="slide-title" class="text-2xl md:text-3xl font-extrabold mb-2 text-white">agile vs nimble</h2>
-        <p id="slide-jp" class="text-slate-400 text-base mb-6">すばやい登山家 (agile, nimble) climbers</p>
+        <h2 id="slide-title" class="text-2xl md:text-3xl font-extrabold mb-6 text-white">agile vs nimble</h2>
         
         <div id="slide-answer-box" class="bg-slate-900/80 p-5 rounded-2xl border border-slate-700 inline-block max-w-xl w-full">
           <button onclick="revealSlideAnswer()" id="reveal-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 px-6 rounded-xl text-sm">Click to Reveal Synonym Verdict</button>
@@ -151,7 +138,7 @@
   </main>
 
   <footer class="text-center text-slate-500 text-xs py-4">
-    Eiken Pre-1 Vocabulary Quest • Image Enhanced Edition
+    Eiken Pre-1 Vocabulary Quest • Untimed Edition
   </footer>
 
   <script>
@@ -172,7 +159,7 @@
           osc.frequency.setValueAtTime(523.25, now); osc.frequency.setValueAtTime(659.25, now + 0.08);
           gain.gain.setValueAtTime(0.15, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
           osc.start(now); osc.stop(now + 0.25);
-        } else if (type === 'wrong' || type === 'timeout') {
+        } else if (type === 'wrong') {
           osc.type = 'sawtooth'; osc.frequency.setValueAtTime(220, now); osc.frequency.setValueAtTime(164.81, now + 0.12);
           gain.gain.setValueAtTime(0.15, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
           osc.start(now); osc.stop(now + 0.3);
@@ -188,31 +175,31 @@
       } catch (e) {}
     }
 
-    // Question Bank with Direct Web Image URLs (Unsplash links)
+    // Question Bank (English Only)
     const levelsData = {
       1: [
-        { prompt: "Are 'prescribe' and 'discard' synonyms?", image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 1, cat: "Day 1 Verbs", jp: "1. discarded (捨てた) vs 3. prescribed (処方した)", explanation: "❌ Not Synonyms! Prescribe = 処方する; Discard = 捨てる." },
-        { prompt: "Are 'reinforce' and 'fortify' synonyms?", image: "https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Day 1 Verbs", jp: "4. reinforce (強化する)", explanation: "✅ Synonyms! Both mean to make stronger or fortify structures." },
-        { prompt: "Are 'articulate' and 'express clearly' synonyms?", image: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Day 1 Verbs", jp: "2. articulated (明確に述べた)", explanation: "✅ Synonyms! Articulate means to express thoughts clearly." },
-        { prompt: "Are 'conform' and 'contradict' synonyms?", image: "https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 1, cat: "Day 1 Verbs", jp: "1. conform (従う) vs 3. contradict (矛盾する)", explanation: "❌ Antonyms! Conform = 基準に従う; Contradict = 矛盾する." },
-        { prompt: "Are 'enroll' and 'register' synonyms?", image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Day 1 Verbs", jp: "2. enrolling (登録して)", explanation: "✅ Synonyms! Both mean to officially enter a course/program." },
-        { prompt: "Are 'boost' and 'humiliate' synonyms?", image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 1, cat: "Day 1 Verbs", jp: "3. boost (活性化する) vs 2. humiliate (恥をかかせる)", explanation: "❌ Not Synonyms! Boost = 活性化する; Humiliate = 恥をかかせる." }
+        { prompt: "Are 'prescribe' and 'discard' synonyms?", image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 1, cat: "Day 1 Verbs", explanation: "❌ Not Synonyms! Prescribe means to order medication, whereas discard means to throw away." },
+        { prompt: "Are 'reinforce' and 'fortify' synonyms?", image: "https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Day 1 Verbs", explanation: "✅ Synonyms! Both mean to make something stronger or fortify structures." },
+        { prompt: "Are 'articulate' and 'express clearly' synonyms?", image: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Day 1 Verbs", explanation: "✅ Synonyms! Articulate means to express thoughts clearly and effectively." },
+        { prompt: "Are 'conform' and 'contradict' synonyms?", image: "https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 1, cat: "Day 1 Verbs", explanation: "❌ Antonyms! Conform means to comply with rules, while contradict means to oppose." },
+        { prompt: "Are 'enroll' and 'register' synonyms?", image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Day 1 Verbs", explanation: "✅ Synonyms! Both mean to officially enter a course or program." },
+        { prompt: "Are 'boost' and 'humiliate' synonyms?", image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 1, cat: "Day 1 Verbs", explanation: "❌ Not Synonyms! Boost means to increase or stimulate, while humiliate means to embarrass." }
       ],
       2: [
-        { prompt: "Are 'agile' and 'nimble' synonyms?", image: "https://images.unsplash.com/photo-1522163182402-834f871fd851?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Positive Adjectives", jp: "すばやい登山家 (agile, nimble) climbers", explanation: "✅ Synonyms! Both mean quick and light in movement." },
-        { prompt: "Are 'feasible' and 'viable' synonyms?", image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Positive Adjectives", jp: "実行可能な計画 a (feasible, viable) plan", explanation: "✅ Synonyms! Both mean practical and capable of working." },
-        { prompt: "Which word is the odd one out for 'crucial role'?", image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600&auto=format&fit=crop&q=80", options: ["critical", "vital", "essential", "obsolete"], correct: 3, cat: "Positive Adjectives", jp: "重要な役割 (crucial, critical, vital, essential) role", explanation: "🎯 'Obsolete' means outdated (ネガティブ), unlike the rest." },
-        { prompt: "Are 'cautious' and 'prudent' synonyms?", image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Positive Adjectives", jp: "慎重な実業家 (cautious, prudent) businessperson", explanation: "✅ Synonyms! Both mean showing care and foresight." },
-        { prompt: "Are 'coherent' and 'consistent' synonyms?", image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Positive Adjectives", jp: "筋の通った意見 a (coherent, consistent) argument", explanation: "✅ Synonyms! Both mean logical and well-structured." },
-        { prompt: "Are 'ardent' and 'apathetic' synonyms?", image: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 1, cat: "Positive Adjectives", jp: "熱烈な支持者 (ardent, passionate) supporters", explanation: "❌ Antonyms! Ardent = 熱烈な; Apathetic = 無関心な." }
+        { prompt: "Are 'agile' and 'nimble' synonyms?", image: "https://images.unsplash.com/photo-1522163182402-834f871fd851?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Positive Adjectives", explanation: "✅ Synonyms! Both mean quick and light in movement." },
+        { prompt: "Are 'feasible' and 'viable' synonyms?", image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Positive Adjectives", explanation: "✅ Synonyms! Both mean practical and capable of working successfully." },
+        { prompt: "Which word is the odd one out for 'crucial role'?", image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600&auto=format&fit=crop&q=80", options: ["critical", "vital", "essential", "obsolete"], correct: 3, cat: "Positive Adjectives", explanation: "🎯 'Obsolete' means outdated, unlike critical, vital, and essential." },
+        { prompt: "Are 'cautious' and 'prudent' synonyms?", image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Positive Adjectives", explanation: "✅ Synonyms! Both mean showing care and foresight for the future." },
+        { prompt: "Are 'coherent' and 'consistent' synonyms?", image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Positive Adjectives", explanation: "✅ Synonyms! Both mean logical, clear, and well-structured." },
+        { prompt: "Are 'ardent' and 'apathetic' synonyms?", image: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 1, cat: "Positive Adjectives", explanation: "❌ Antonyms! Ardent means passionate, whereas apathetic means showing no enthusiasm." }
       ],
       3: [
-        { prompt: "Select the synonym for 'bleak' outlook:", image: "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=600&auto=format&fit=crop&q=80", options: ["dismal", "robust", "brisk", "prominent"], correct: 0, cat: "Negative Adjectives", jp: "暗い見通し a (bleak, dismal, gloomy) outlook", explanation: "✅ Correct! Bleak, dismal, and gloomy all mean dark/gloomy." },
-        { prompt: "Are 'unveil' and 'insulate' synonyms?", image: "https://images.unsplash.com/photo-1513151233558-d860c5398176?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 1, cat: "Verbs II", jp: "1. unveiled (明らかにされた) vs 2. insulated (隔離された)", explanation: "❌ Not Synonyms! Unveil = 公開する; Insulate = 隔離・断熱する." },
-        { prompt: "Are 'absurd' and 'ridiculous' synonyms?", image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Negative Adjectives", jp: "ばかげた考え a (absurd, ridiculous) idea", explanation: "✅ Synonyms! Both mean completely unreasonable or silly." },
-        { prompt: "Are 'obsolete' and 'outdated' synonyms?", image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Negative Adjectives", jp: "古くさい兵器 (obsolete, outdated) weapons", explanation: "✅ Synonyms! Both mean no longer produced or used." },
-        { prompt: "Are 'prohibit' and 'authorize' synonyms?", image: "https://images.unsplash.com/photo-1586769852044-692d6e3703f0?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 1, cat: "Verbs II", jp: "4. prohibited (禁止された) vs 3. authorized (権限を与えた)", explanation: "❌ Antonyms! Prohibit = 禁止する; Authorize = 許可・権限を与える." },
-        { prompt: "Are 'fickle' and 'capricious' synonyms?", image: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Negative Adjectives", jp: "気紛れな恋人 (capricious, fickle) boyfriend", explanation: "✅ Synonyms! Both mean changing loyally/unpredictably." }
+        { prompt: "Select the synonym for 'bleak' outlook:", image: "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=600&auto=format&fit=crop&q=80", options: ["dismal", "robust", "brisk", "prominent"], correct: 0, cat: "Negative Adjectives", explanation: "✅ Correct! Bleak, dismal, and gloomy all describe dark or dreary conditions." },
+        { prompt: "Are 'unveil' and 'insulate' synonyms?", image: "https://images.unsplash.com/photo-1513151233558-d860c5398176?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 1, cat: "Verbs II", explanation: "❌ Not Synonyms! Unveil means to reveal publicly; insulate means to isolate or protect." },
+        { prompt: "Are 'absurd' and 'ridiculous' synonyms?", image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Negative Adjectives", explanation: "✅ Synonyms! Both mean completely unreasonable or silly." },
+        { prompt: "Are 'obsolete' and 'outdated' synonyms?", image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Negative Adjectives", explanation: "✅ Synonyms! Both mean no longer produced, used, or relevant." },
+        { prompt: "Are 'prohibit' and 'authorize' synonyms?", image: "https://images.unsplash.com/photo-1586769852044-692d6e3703f0?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 1, cat: "Verbs II", explanation: "❌ Antonyms! Prohibit means to forbid; authorize means to give official permission." },
+        { prompt: "Are 'fickle' and 'capricious' synonyms?", image: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=600&auto=format&fit=crop&q=80", options: ["Yes, Synonyms", "No, Not Synonyms"], correct: 0, cat: "Negative Adjectives", explanation: "✅ Synonyms! Both mean changing frequently or unpredictably." }
       ]
     };
 
@@ -222,7 +209,6 @@
     let score = 0;
     let correctCount = 0;
     let streak = 0;
-    let timerTimeout = null;
     let currentSlide = 0;
 
     function setMode(mode) {
@@ -233,7 +219,6 @@
         document.getElementById('mode-game').className = "px-4 py-1.5 rounded-lg text-sm font-bold transition-all bg-indigo-600 text-white shadow-md";
         document.getElementById('mode-slides').className = "px-4 py-1.5 rounded-lg text-sm font-bold text-slate-400 hover:text-white transition-all";
       } else {
-        clearTimeout(timerTimeout);
         document.getElementById('game-view').classList.add('hidden');
         document.getElementById('slides-view').classList.remove('hidden');
         document.getElementById('mode-slides').className = "px-4 py-1.5 rounded-lg text-sm font-bold transition-all bg-indigo-600 text-white shadow-md";
@@ -244,7 +229,6 @@
 
     function showLevelSelect() {
       playSound('click');
-      clearTimeout(timerTimeout);
       document.getElementById('level-select-view').classList.remove('hidden');
       document.getElementById('quiz-arena-view').classList.add('hidden');
       updateLevelDashboard();
@@ -279,30 +263,9 @@
       renderQuestion();
     }
 
-    function startTimer() {
-      const bar = document.getElementById('timer-bar');
-      bar.classList.remove('animate-timer');
-      void bar.offsetWidth;
-      bar.classList.add('animate-timer');
-      clearTimeout(timerTimeout);
-      timerTimeout = setTimeout(() => { handleTimeout(); }, 15000);
-    }
-
-    function handleTimeout() {
-      playSound('timeout');
-      streak = 0;
-      document.getElementById('streak-tag').innerText = `🔥 0 STREAK`;
-      document.getElementById('feedback-badge').innerText = "⏰";
-      document.getElementById('feedback-title').innerText = "Time's Up!";
-      document.getElementById('feedback-title').className = "text-3xl font-extrabold mb-2 text-amber-400";
-      document.getElementById('feedback-detail').innerText = "You ran out of time!";
-      document.getElementById('feedback-modal').classList.remove('hidden');
-    }
-
     function renderQuestion() {
       const q = levelsData[activeLevel][currentQ];
       
-      // Load Image
       const imgEl = document.getElementById('q-image');
       if (q.image) {
         imgEl.src = q.image;
@@ -323,11 +286,9 @@
         btn.onclick = () => checkAnswer(idx);
         grid.appendChild(btn);
       });
-      startTimer();
     }
 
     function checkAnswer(idx) {
-      clearTimeout(timerTimeout);
       const q = levelsData[activeLevel][currentQ];
       const isCorrect = idx === q.correct;
       const modal = document.getElementById('feedback-modal');
@@ -365,7 +326,6 @@
     }
 
     function finishLevel() {
-      clearTimeout(timerTimeout);
       const total = levelsData[activeLevel].length;
       const accuracy = Math.round((correctCount / total) * 100);
       
@@ -418,7 +378,6 @@
       document.getElementById('slide-cat').innerText = q.cat;
       document.getElementById('slide-num').innerText = `Slide ${currentSlide + 1} / ${allSlides.length}`;
       document.getElementById('slide-title').innerText = q.prompt;
-      document.getElementById('slide-jp').innerText = q.jp;
       document.getElementById('reveal-btn').classList.remove('hidden');
       document.getElementById('slide-answer-text').classList.add('hidden');
       document.getElementById('slide-explanation-text').innerText = q.explanation;
